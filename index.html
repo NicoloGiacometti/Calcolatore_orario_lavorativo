@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="Orario" />
-<meta name="theme-color" content="#f5f5f3" />
-<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Calcolatore Orario&quot;,&quot;short_name&quot;:&quot;Orario&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23f5f5f3&quot;,&quot;theme_color&quot;:&quot;%23f5f5f3&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%233a7bd5'/><text y='.9em' font-size='70' x='15'>🕐</text></svg>&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Orario">
+<meta name="theme-color" content="#f5f5f3">
+<link rel="manifest" href="data:application/json,{&quot;name&quot;:&quot;Calcolatore Orario&quot;,&quot;short_name&quot;:&quot;Orario&quot;,&quot;start_url&quot;:&quot;.&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23f5f5f3&quot;,&quot;theme_color&quot;:&quot;%23f5f5f3&quot;,&quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'&gt;&lt;rect width='100' height='100' rx='22' fill='%233a7bd5'/&gt;&lt;text y='.9em' font-size='70' x='15'&gt;🕐&lt;/text&gt;&lt;/svg&gt;&quot;,&quot;sizes&quot;:&quot;any&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]}">
 <title>Calcolatore Orario Lavorativo</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,6 +32,7 @@
   .field-label { display: block; font-size: 13px; color: #888; margin-bottom: 6px; }
   input[type="time"] {
     width: 100%;
+    max-width: 100%;
     font-size: 20px;
     font-weight: 500;
     padding: 8px 12px;
@@ -40,6 +41,9 @@
     background: #f5f5f3;
     color: #1a1a18;
     margin-bottom: 1.25rem;
+    -webkit-appearance: none;
+    appearance: none;
+    min-height: 44px;
   }
   .checkbox-row {
     display: flex;
@@ -55,8 +59,6 @@
   .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #3a7bd5; }
   .checkbox-row .label-main { font-size: 14px; color: #1a1a18; }
   .checkbox-row .label-sub  { font-size: 13px; color: #888; }
-
-  /* Uscita base */
   .result-row {
     border-top: 1px solid #e0dfd8;
     padding-top: 1.25rem;
@@ -68,8 +70,6 @@
   .result-label { font-size: 13px; color: #888; margin-bottom: 4px; }
   #uscita { font-size: 32px; font-weight: 500; color: #1a1a18; }
   .detail { font-size: 13px; color: #aaa; text-align: right; line-height: 1.6; }
-
-  /* Prossimo slot */
   #prossimo-wrap {
     display: none;
     border-radius: 10px;
@@ -81,8 +81,6 @@
   #prossimo-wrap .prx-label { font-size: 12px; color: #3a7bd5; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
   #prossimo-wrap .prx-time  { font-size: 28px; font-weight: 600; color: #1a1a18; }
   #prossimo-wrap .prx-sub   { font-size: 13px; color: #555; margin-top: 2px; }
-
-  /* Lista slot */
   #slot-wrap { display: none; }
   .slot-toggle {
     display: flex;
@@ -94,10 +92,7 @@
     margin-bottom: 8px;
     user-select: none;
   }
-  .slot-toggle .chevron {
-    font-size: 11px;
-    transition: transform .2s;
-  }
+  .slot-toggle .chevron { font-size: 11px; transition: transform .2s; }
   .slot-toggle.open .chevron { transform: rotate(180deg); }
   .slot-list { display: flex; flex-direction: column; gap: 6px; overflow: hidden; max-height: 0; transition: max-height .25s ease; }
   .slot-item {
@@ -113,15 +108,16 @@
   }
   .slot-item .slot-extra { font-size: 12px; color: #aaa; }
   .slot-item.passed { opacity: 0.4; }
+  .version { text-align: right; font-size: 11px; color: #bbb; margin-top: 1rem; }
 </style>
 </head>
 <body>
 <div class="card">
   <label class="field-label" for="ingresso">Orario di ingresso</label>
-  <input type="time" id="ingresso" value="08:00" />
+  <input type="time" id="ingresso" value="08:00">
 
   <label class="checkbox-row">
-    <input type="checkbox" id="pranzo" />
+    <input type="checkbox" id="pranzo">
     <span class="label-main">Pranzo ridotto <span class="label-sub">(45 min invece di 1h)</span></span>
   </label>
 
@@ -146,6 +142,8 @@
     </div>
     <div class="slot-list" id="slot-list"></div>
   </div>
+
+  <div class="version">v1.6</div>
 </div>
 
 <script>
@@ -171,15 +169,12 @@
     document.getElementById('uscita').textContent = fmt(uscitaBase);
     document.getElementById('detail').innerHTML = '7h 36min lavoro<br>+ ' + pausa + 'min pausa';
 
-    // Slot straordinari: primo a +30min, poi ogni 15min
     const slots = [];
     slots.push(uscitaBase + 30);
     for (let i = 1; i < 5; i++) slots.push(slots[i-1] + 15);
 
-    // Prossimo slot utile rispetto all'ora attuale
     const adesso = nowMin();
     const prossimo = slots.find(s => s > adesso);
-
     const proxWrap = document.getElementById('prossimo-wrap');
     const slotWrap = document.getElementById('slot-wrap');
 
@@ -195,7 +190,6 @@
       proxWrap.style.display = 'none';
     }
 
-    // Lista 5 slot
     const list = document.getElementById('slot-list');
     list.innerHTML = '';
     slots.forEach((s, i) => {
@@ -206,16 +200,11 @@
       list.appendChild(div);
     });
     slotWrap.style.display = 'block';
-    // Aggiorna altezza se accordion è aperto
     const toggle = document.getElementById('slot-toggle');
     if (toggle.classList.contains('open')) {
       document.getElementById('slot-list').style.maxHeight = document.getElementById('slot-list').scrollHeight + 'px';
     }
   }
-
-  document.getElementById('ingresso').addEventListener('input', calcola);
-  document.getElementById('pranzo').addEventListener('change', calcola);
-  calcola();
 
   function toggleSlot() {
     const list = document.getElementById('slot-list');
@@ -225,10 +214,12 @@
     list.style.maxHeight = isOpen ? '0' : list.scrollHeight + 'px';
   }
 
-  // Aggiorna ogni minuto per tenere aggiornato il prossimo slot
+  document.getElementById('ingresso').addEventListener('input', calcola);
+  document.getElementById('pranzo').addEventListener('change', calcola);
+  calcola();
+
   setInterval(calcola, 60000);
 
-  // Service Worker inline per PWA
   if ('serviceWorker' in navigator) {
     const sw = `self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => new Response(''))));`;
     const blob = new Blob([sw], {type: 'application/javascript'});
