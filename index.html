@@ -55,10 +55,50 @@
     border-radius: 8px;
     margin-bottom: 1.25rem;
     user-select: none;
+    flex-wrap: wrap;
   }
   .checkbox-row input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #3a7bd5; }
   .checkbox-row .label-main { font-size: 14px; color: #1a1a18; }
   .checkbox-row .label-sub  { font-size: 13px; color: #888; }
+  #pausa-slider {
+    display: none;
+    flex: 1;
+    min-width: 100px;
+    margin-left: 15px;
+    align-items: center;
+    gap: 8px;
+  }
+  #pausa-durata {
+    flex: 1;
+    height: 4px;
+    border-radius: 2px;
+    background: #d0cfc8;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    min-width: 60px;
+  }
+  #pausa-durata::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3a7bd5;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  #pausa-durata::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #3a7bd5;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  #pausa-valore { font-size: 12px; color: #888; white-space: nowrap; }
   .result-row {
     border-top: 1px solid #e0dfd8;
     padding-top: 1.25rem;
@@ -118,7 +158,11 @@
 
   <label class="checkbox-row">
     <input type="checkbox" id="pranzo">
-    <span class="label-main">Pranzo ridotto <span class="label-sub">(45 min invece di 1h)</span></span>
+    <span class="label-main">Pranzo ridotto</span>
+    <div id="pausa-slider">
+      <input type="range" id="pausa-durata" min="15" max="120" value="45" step="5">
+      <div id="pausa-valore">45m</div>
+    </div>
   </label>
 
   <div class="result-row">
@@ -163,7 +207,7 @@
     if (!val) return;
     const [h, m] = val.split(':').map(Number);
     const pranzo = document.getElementById('pranzo').checked;
-    const pausa = pranzo ? 45 : 60;
+    const pausa = pranzo ? parseInt(document.getElementById('pausa-durata').value) : 60;
     const uscitaBase = h * 60 + m + 7 * 60 + 36 + pausa;
 
     document.getElementById('uscita').textContent = fmt(uscitaBase);
@@ -215,7 +259,15 @@
   }
 
   document.getElementById('ingresso').addEventListener('input', calcola);
-  document.getElementById('pranzo').addEventListener('change', calcola);
+  document.getElementById('pranzo').addEventListener('change', function() {
+    const slider = document.getElementById('pausa-slider');
+    slider.style.display = this.checked ? 'flex' : 'none';
+    calcola();
+  });
+  document.getElementById('pausa-durata').addEventListener('input', function() {
+    document.getElementById('pausa-valore').textContent = this.value + ' minuti';
+    calcola();
+  });
   calcola();
 
   setInterval(calcola, 60000);
