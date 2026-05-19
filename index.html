@@ -153,6 +153,7 @@
   .ore-toggle {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 1.5rem;
     font-size: 13px;
@@ -196,9 +197,10 @@
   <input type="time" id="ingresso" value="08:00">
 
   <label class="ore-toggle">
+    <span id="ore-label">7:36 h</span>
     <input type="checkbox" id="ore-8">
     <span class="toggle-switch"></span>
-    <span id="ore-label">7h 36min</span>
+    <span id="ore-label">8 ore</span>
   </label>
   
   <label class="checkbox-row">
@@ -307,7 +309,7 @@
 
   document.getElementById('ingresso').addEventListener('input', calcola);
   document.getElementById('ore-8').addEventListener('change', function() {
-    document.getElementById('ore-label').textContent = this.checked ? '8 ore' : '7h 36min';
+    //document.getElementById('ore-label').textContent = this.checked ? '8 ore' : '7h 36min';
     calcola();
   });
   document.getElementById('pranzo').addEventListener('change', function() {
